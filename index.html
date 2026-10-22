@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Home · Piano Test Site</title>
+<link rel="stylesheet" href="style.css">
+<script>window.PIANO_SECTION="home";window.PIANO_TAGS=[];</script>
+<script src="piano.js"></script>
+</head><body>
+<header><a href="index.html" class="logo">Piano Test Site</a>
+<nav><a href="index.html">Home</a><a href="article-free.html">Free article</a><a href="article-premium.html">Premium article</a><a href="epaper.html">E-paper</a></nav>
+<div class="account"><span id="user-status">…</span>
+<button onclick="pianoLogin()">Log in</button><button onclick="pianoRegister()">Register</button><button onclick="pianoLogout()">Log out</button></div>
+</header>
+<div id="piano-banner"></div>
+<main>
+<h1>Piano Composer test site</h1><p>Use these pages to test Composer experiences on the Thomas sandbox app. Each page sets its own content section and tags, so experiences can target them.</p><ul><li><b>Free article</b>: section <code>news</code>, tag <code>free</code></li><li><b>Premium article</b>: section <code>news</code>, tag <code>premium</code>, has a paywall container</li><li><b>E-paper</b>: section <code>epaper</code>, tag <code>epaper</code></li></ul><h2>Containers</h2><p>Offers and templates can be shown inline in <code>#piano-inline</code>, as a banner in <code>#piano-banner</code>, or in <code>#piano-modal</code>.</p><div id="piano-inline"></div>
+</main>
+<div id="piano-modal"></div>
+<footer>Sandbox test site for Piano Composer (AID 0flQ5bxOsu). Section: home. Tags: </footer>
+</body></html>
