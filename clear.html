@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reset · Piano Test Site</title>
+<link rel="stylesheet" href="style.css">
+</head><body>
+<header><a href="index.html" class="logo">Piano Test Site</a>
+<nav><a href="index.html">Home</a><a href="article-free.html">Free article</a><a href="article-premium.html">Premium article</a><a href="epaper.html">E-paper</a><a href="clear.html">Reset</a></nav>
+</header>
+<main>
+<h1>Reset meter and A/B state</h1>
+<p>This page clears cookies, localStorage, and sessionStorage for this origin so a pageview meter and Composer A/B assignment can start over. It does not load Piano, so the clear is not immediately overwritten.</p>
+<p>Cookies set on tinypass.com or piano.io are not visible here and stay as they are. First-party cookies such as the browser id used for stickiness are removed when the page can see them.</p>
+<p><a href="index.html">Back to home</a> · <a href="article-premium.html">Premium article</a></p>
+<p><button type="button" id="clear-again">Clear again</button></p>
+<pre id="clear-log" style="max-width:720px;padding:12px;background:#eee;font-size:12px;white-space:pre-wrap">Clearing…
+</pre>
+</main>
+<footer>Sandbox test site for Piano Composer (AID 0flQ5bxOsu). Reset page.</footer>
+<script>
+(function () {
+  function cookieNames(cookie) {
+    if (!cookie) return [];
+    var parts = cookie.split(";");
+    var names = [];
+    var i;
+    for (i = 0; i < parts.length; i++) {
+      var name = parts[i].split("=")[0].replace(/^\s+|\s+$/g, "");
+      if (name && names.indexOf(name) < 0) names.push(name);
+    }
+    return names;
+  }
+  function storageKeys(store) {
+    var keys = [];
+    try {
+      var i;
+      for (i = 0; i < store.length; i++) keys.push(store.key(i));
+    } catch (err) {
+      return { keys: [], error: err && err.message ? err.message : String(err) };
+    }
+    return { keys: keys, error: "" };
+  }
+  function domainsFor(host) {
+    var domains = ["", host];
+    if (host) domains.push("." + host);
+    var parts = host ? host.split(".") : [];
+    var i;
+    for (i = 0; i < parts.length - 1; i++) {
+      var parent = parts.slice(i).join(".");
+      if (domains.indexOf(parent) < 0) domains.push(parent);
+      if (domains.indexOf("." + parent) < 0) domains.push("." + parent);
+    }
+    return domains;
+  }
+  function pathsFor() {
+    var paths = ["/"];
+    var path = location.pathname || "/";
+    if (paths.indexOf(path) < 0) paths.push(path);
+    var dir = path.replace(/[^/]*$/, "");
+    if (dir && paths.indexOf(dir) < 0) paths.push(dir);
+    return paths;
+  }
+  function expireCookie(name) {
+    var domains = domainsFor(location.hostname);
+    var paths = pathsFor();
+    var d;
+    var p;
+    for (d = 0; d < domains.length; d++) {
+      for (p = 0; p < paths.length; p++) {
+        var cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; max-age=0; path=" + paths[p];
+        if (domains[d]) cookie += "; domain=" + domains[d];
+        document.cookie = cookie;
+      }
+    }
+  }
+  function list(items) {
+    if (!items.length) return "(none)";
+    return items.join(", ");
+  }
+  function clearOriginState() {
+    var lines = [];
+    var cookiesBefore = cookieNames(document.cookie);
+    var localBefore = storageKeys(window.localStorage);
+    var sessionBefore = storageKeys(window.sessionStorage);
+    var i;
+    for (i = 0; i < cookiesBefore.length; i++) expireCookie(cookiesBefore[i]);
+    try { window.localStorage.clear(); } catch (err) { lines.push("localStorage clear error: " + (err && err.message ? err.message : err)); }
+    try { window.sessionStorage.clear(); } catch (err) { lines.push("sessionStorage clear error: " + (err && err.message ? err.message : err)); }
+    var cookiesAfter = cookieNames(document.cookie);
+    lines.push("Cleared cookies (" + cookiesBefore.length + "): " + list(cookiesBefore));
+    if (cookiesAfter.length) lines.push("Cookies still visible: " + list(cookiesAfter));
+    else lines.push("No cookies left visible on this origin.");
+    lines.push("Cleared localStorage (" + localBefore.keys.length + "): " + (localBefore.error || list(localBefore.keys)));
+    lines.push("Cleared sessionStorage (" + sessionBefore.keys.length + "): " + (sessionBefore.error || list(sessionBefore.keys)));
+    lines.push("Open the premium article or home page to run the experience again.");
+    return lines.join("\n");
+  }
+  function run() {
+    var el = document.getElementById("clear-log");
+    var text = clearOriginState();
+    if (el) el.textContent = text;
+    console.log("[piano-clear]\n" + text);
+  }
+  var button = document.getElementById("clear-again");
+  if (button) button.addEventListener("click", run);
+  run();
+})();
+</script>
+</body></html>
